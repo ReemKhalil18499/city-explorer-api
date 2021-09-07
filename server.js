@@ -5,7 +5,7 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 require("dotenv").config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 const weather = require("./weather/data/weather.json");
 
@@ -25,25 +25,27 @@ class Forecast {
 
 app.get("/weather", (req, res) => {
   // console.log(req, query.city_name);
-
+  // res.send("hello weather");
   let city_name = req.query.city_name;
-  let lat = req.query.lat;
-  let lon = req.query.lon;
+  // let lat = req.query.lat;
+  // let lon = req.query.lon;
 
-  const ArrReturn = weather.find((item) => {
-    // console.log(item);
-    return item.city_name.toLowerCase() === city_name.toLocaleLowerCase();
-  });
+  const ArrReturn = weather.find(
+    (item) => item.city_name.toLowerCase() === city_name.toLocaleLowerCase()
+  );
+  console.log(ArrReturn.data);
 
-  if (ArrReturn.length) {
-    let newArr = ArrReturn.data.map((item) => {
-      return new Forecast(item.datetime, item.weather.description);
-    });
-    res.json(newArr);
+  if (ArrReturn) {
+    let newArr = ArrReturn.data.map(
+      item => new Forecast(item)
+    );
+
+    res.send(newArr);
   } else {
-    res.json("data not found");
+    res.send("data not found");
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
