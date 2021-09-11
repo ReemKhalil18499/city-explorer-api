@@ -17,11 +17,13 @@ app.get(
 );
 
 class Forecast {
-  constructor(date, description) {
-    this.date = date;
-    this.description = description;
+  constructor(item) {
+    this.date = item.valid_date;
+    this. description= `Low of ${item.low_temp}, high of ${item.max_temp} with broken clouds${item.weather.description}` ;
   }
 }
+
+
 
 app.get("/weather", (req, res) => {
   // console.log(req, query.city_name);
