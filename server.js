@@ -6,11 +6,13 @@ const cors = require("cors");
 app.use(cors());
 require("dotenv").config();
 const PORT = process.env.PORT || 3000;
+const axios = require('axios');
 
-const weather = require("./weather/data/weather.json");
+// const weather = require("./weather/data/weather.json");
+const Weather = process.env.WEATHER_API;
+const movieKey = process.env.MOVIE_API;
 
-app.get(
-  "/", // our endpoint name
+app.get("/", // our endpoint name
   function (req, res) {
     res.send("Hello World");
   }
@@ -23,29 +25,46 @@ class Forecast {
   }
 }
 
-
+class Movie {
+  constructor(item){
+    this.title = item.title;
+    this. overview= item.overview;
+    this. average_votes= item.vote_average;
+    this. total_votes= item.vote_count;
+    this. image_url= `https://image.tmdb.org/t/p/w500${item.backdrop_path}`;
+    this. popularity= item.popularity;
+    this. released_on= item.release_date;
+  }
+}
 
 app.get("/weather", (req, res) => {
-  // console.log(req, query.city_name);
-  // res.send("hello weather");
-  let city_name = req.query.city_name;
-  // let lat = req.query.lat;
-  // let lon = req.query.lon;
+  let search = req.query.city_name;
+  let url = `http://api.weatherbit.io/v2.0/forecast/daily?city=${search}&key=${Weather}`;
+  axios
+  .get(url)
+  .then( result => {
+    let newWeath =  result.data.data.map(item => {
+      return new Forecast(item);
+    })
+    res.send(newWeath)
+  })
+  .catch(err => console.log(err))
+});
 
-  const ArrReturn = weather.find(
-    (item) => item.city_name.toLowerCase() === city_name.toLocaleLowerCase()
-  );
-  console.log(ArrReturn.data);
+app.get("/movie", (req, res) => {
+  let search = req.query.city_name;
+  let url = `https://api.themoviedb.org/3/search/movie?api_key=${movieKey}&query=${search}`;
 
-  if (ArrReturn) {
-    let newArr = ArrReturn.data.map(
-      item => new Forecast(item)
-    );
+  axios
+  .get(url)
+  .then( result => {
+    let newMovie =  result.data.results.map(item => {
+      return new Movie(item);
+    })
 
-    res.send(newArr);
-  } else {
-    res.send("data not found");
-  }
+    res.send(newMovie)
+  })
+  .catch(err => console.log(err))
 });
 
 

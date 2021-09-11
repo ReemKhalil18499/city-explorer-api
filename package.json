@@ -4,7 +4,7 @@
   "description": "# Project Name",
   "main": "server.js",
   "scripts": {
-    "start":  "nodemon server.js ",
+    "start": "nodemon server.js ",
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ReemKhalil18499/city-explorer-api#readme",
   "dependencies": {
+    "axios": "^0.21.4",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
